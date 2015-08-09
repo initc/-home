@@ -43,7 +43,7 @@ public class LognAndSign {
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();
-			result = ReturnMessage.InternetError;
+			result = ReturnMessage.ServerError;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
