@@ -1,7 +1,9 @@
-package com.jie.homeutil;
+package com.jie.netHome;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -9,49 +11,53 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.jie.homeutil.LognAndSign.ReturnMessage;
+import android.content.Context;
 
-public class BindSocket {
-private String  parseIn="BindIn";
+import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.jie.homeutil.IpDstport;
 
-    //绑定服务器上的用户信息   
-    // 返回用户是否绑定的信息
-	public ReturnMessage Bind(String srcName, String dstName) {
-		ReturnMessage result = ReturnMessage.Success;
+public class PostPoi implements Runnable {
+	Context context ;
+	GeoPoint  poi ;
+	String parseIn = "service";
+public PostPoi (Context context,GeoPoint  poi ){
+	
+	this.poi=poi;
+	this.context=context ;
+}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
 		BufferedWriter out = null;
 		BufferedReader in = null ;
 		Socket client = null;
 		try {
 			
 			client = new Socket();
-			
 			client.connect(new InetSocketAddress(IpDstport.ip, IpDstport.dstPort), 2000);
-
+            File nameFile = new File(context.getFilesDir(),"user.jie");
+            BufferedReader read = new BufferedReader(new FileReader(nameFile));
+            String srcName = read.readLine();
+            read.close();
 			out = new BufferedWriter(new OutputStreamWriter(
 					client.getOutputStream()));
 			in =new BufferedReader(new InputStreamReader(client.getInputStream()));
 			out.write(parseIn + "\r\n");
 			out.write(srcName + "\r\n");
-			out.write(dstName + "\r\n");
+			int x=poi.getLatitudeE6();
+			int y = poi.getLongitudeE6();
+			out.write(x+ "\r\n");
+			out.write(y + "\r\n");
 			out.flush();
-		   int up =	Integer.parseInt(in.readLine());//得到server上的返回值  如果值為1則成功  否則是用戶名重複  -1为服务器错误
-          if (up==0){
-        	  result = ReturnMessage.UserNameRepeat;//用户已经和對方綁定
-          }else if (up==-1){
-        	  
-        	  result = ReturnMessage.ServerError;
-          }else if (up == 2){
-        	  
-        	  result = ReturnMessage.ParseError;
-          }
+		   
+		  
 		} catch (UnknownHostException e) {
-
 			e.printStackTrace();
-			result = ReturnMessage.ServerError;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			result = ReturnMessage.InternetError;
 		}
 
 		finally {
@@ -70,8 +76,8 @@ private String  parseIn="BindIn";
 				}
 
 		}
-		return result;
+		
+		
 	}
-	
-	
+
 }

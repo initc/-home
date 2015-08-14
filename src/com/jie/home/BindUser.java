@@ -1,6 +1,11 @@
 package com.jie.home;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +33,31 @@ public class BindUser extends Activity {
 			// 添加成功后 在本地建立一个用户数据 来判断此用户是否已经登录了
 			// 之后的登录需要进行判断 该用户是否可以进行登录
 			
-				Toast.makeText(BindUser.this, "绑定成功", 0).show();
+			Toast.makeText(BindUser.this, "绑定成功", 0).show();
+			File bindFile =	new File(BindUser.this.getFilesDir(),"bind.jie");
+			if(!bindFile.exists()){
+				BufferedWriter w=null;
+				try {
+					bindFile.createNewFile();
+					 w = new BufferedWriter(new FileWriter(bindFile));
+					w.write(user.getText().toString());
+					w.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}finally{
+					
+					try {
+						if(w!=null)
+						w.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				
+			}
 			return;
 		}
 		if (msg.what == 0x99) {// 未实现
@@ -75,7 +104,11 @@ public class BindUser extends Activity {
 			Toast.makeText(this, "你还没有账户 请注册账户再试",0).show();
 			return ;
 		}
-		
+		File bindFile =	new File(BindUser.this.getFilesDir(),"bind.jie");
+		if(bindFile.exists()){
+			Toast.makeText(this, "你已经绑定了",0).show();
+			return ;
+		}
 		new Thread(new BindNet(this,srcName,handler)).start();
 	}
 	@Override

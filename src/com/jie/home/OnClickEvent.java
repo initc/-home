@@ -1,5 +1,7 @@
 package com.jie.home;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
@@ -12,8 +14,15 @@ public class OnClickEvent {
 	public static void HimLocation_OnClick(View e){
 		
 		
-		Toast.makeText(context, "HimLocation_OnClick",0).show();
-		
+		//Toast.makeText(context, "HimLocation_OnClick",0).show();
+		File bindFile = new  File(context.getFilesDir(),"bind.jie");
+		if(!bindFile.exists()){
+			Toast.makeText(context, "你还没有绑定  请绑定后再试", Toast.LENGTH_SHORT).show();
+			return ;
+		}
+		Intent intent = new Intent(context,OtherLocation.class);
+		context.startActivity(intent);
+		context.overridePendingTransition(R.anim.wlecome_in, R.anim.stayp);
 		
 	}
 	

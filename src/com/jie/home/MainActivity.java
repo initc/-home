@@ -1,6 +1,7 @@
 package com.jie.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -8,10 +9,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 public class MainActivity extends Activity {
 	
 	
-	
+	public static LocationClient loc ;
 	private static Boolean isExit = false;
 	private Handler handler = new Handler() {
 		@Override
@@ -26,7 +30,7 @@ public class MainActivity extends Activity {
 		};
 
 	};
-
+	LocationClient mLocClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,6 +38,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		OnClickEvent.context=this;
 		OnClickEvent.handler=handler;
+		
+		Intent intent = new Intent(this,BackService.class);
+	   
+		startService(intent);
 	}
 
 	@Override

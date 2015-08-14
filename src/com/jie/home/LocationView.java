@@ -29,7 +29,7 @@ public class LocationView extends Activity {
 	private LocationData locData = null;
 	private boolean is = true;
 	private Button send = null;
-
+ private  boolean io =true ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -80,7 +80,7 @@ public class LocationView extends Activity {
 		// TODO Auto-generated method stub
 		
 		if(event.getKeyCode()==KeyEvent.KEYCODE_BACK){
-			
+			io=false ;
 			finish();
 			overridePendingTransition(R.anim.stayp, R.anim.welcome_out);
 		}
@@ -99,22 +99,25 @@ public class LocationView extends Activity {
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
-		super.onResume();
 		myView.onResume();
+		super.onResume();
+		
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		super.onPause();
 		myView.onPause();
+		super.onPause();
+		
 	}
 
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		super.onDestroy();
 		myView.destroy();
+		super.onDestroy();
+		
 	}
 
 	@Override
@@ -147,6 +150,7 @@ public class LocationView extends Activity {
 			locData.accuracy = location.getRadius();
 			locData.direction = location.getDerect();
 			myLocationOverlay.setData(locData);
+			if(io)
 			myView.refresh();
 			if (is) {
 
