@@ -39,13 +39,13 @@ import com.jie.netHome.GetPoi;
 
 public class OtherLocation extends Activity {
 	MapView map;
-	MKRoute route = null;// 保存驾车/步行路线数据的变量，供浏览节点时使用
+	MKRoute route = null;// 保存路线的点的容器  一个具体的路线 肯定包含多个点组成的节点
 	TransitOverlay transitOverlay = null;// 保存公交路线图层数据的变量，供浏览节点时使用
-	RouteOverlay routeOverlay = null;
+	RouteOverlay routeOverlay = null;//一个多个点组成的位子的路线图层 应该是map的图层子类
 	boolean useDefaultIcon = false;
-	MKSearch mSearch = null;
-	LocationClient mLocClient;
-	GeoPoint myPoi;
+	MKSearch mSearch = null;//进行搜索定位的接口类   两个GeoPoint  可为具体的经纬度或者地域名称
+	LocationClient mLocClient;//获取自己本身的位子信息   可以设置多长时间进行刷新
+	GeoPoint myPoi; //位子的存储类  是具体的 经纬度
 	MyLocationOverlay myLocationOverlay;
 	LocationData data ;
 	 MapController  controll ;
@@ -106,25 +106,11 @@ public class OtherLocation extends Activity {
 		controll=map.getController();
 		mSearch = new MKSearch();
 		data = new LocationData();
-		myLocationOverlay =new MyLocationOverlay(map);
+		myLocationOverlay =new MyLocationOverlay(map);//接受百度服务器发过来的位子信息
 		mSearch.init(app.mBMapManager, new MKSearchListener() {
 
 			public void onGetDrivingRouteResult(MKDrivingRouteResult res,
 					int error) {
-				// 起点或终点有歧义，需要选择具体的城市列表或地址列表
-				if (error == MKEvent.ERROR_ROUTE_ADDR) {
-					// 遍历所有地址
-					// ArrayList<MKPoiInfo> stPois =
-					// res.getAddrResult().mStartPoiList;
-					// ArrayList<MKPoiInfo> enPois =
-					// res.getAddrResult().mEndPoiList;
-					// ArrayList<MKCityListInfo> stCities =
-					// res.getAddrResult().mStartCityList;
-					// ArrayList<MKCityListInfo> enCities =
-					// res.getAddrResult().mEndCityList;
-					return;
-				}
-				// 错误号可参考MKEvent中的定义
 				if (error != 0 || res == null) {
 					Toast.makeText(OtherLocation.this, "抱歉，未找到结果",
 							Toast.LENGTH_SHORT).show();
@@ -132,41 +118,20 @@ public class OtherLocation extends Activity {
 				}
 
 				routeOverlay = new RouteOverlay(OtherLocation.this, map);
-				// 此处仅展示一个方案作为示例
 				routeOverlay.setData(res.getPlan(0).getRoute(0));
-				// 清除其他图层
 				map.getOverlays().clear();
-				// 添加路线图层
 				map.getOverlays().add(routeOverlay);
-				// 执行刷新使生效
 				map.refresh();
-				// 使用zoomToSpan()绽放地图，使路线能完全显示在地图上
 				map.getController().zoomToSpan(routeOverlay.getLatSpanE6(),
 						routeOverlay.getLonSpanE6());
-				// 移动地图到起点
 				map.getController().animateTo(res.getStart().pt);
-				// 将路线数据保存给全局变量
 				route = res.getPlan(0).getRoute(0);
-				// 重置路线节点索引，节点
-				// 浏览时使用
 
 			}
 
 			public void onGetTransitRouteResult(MKTransitRouteResult res,
 					int error) {
-				// 起点或终点有歧义，需要选择具体的城市列表或地址列表
-				if (error == MKEvent.ERROR_ROUTE_ADDR) {
-					// 遍历所有地址
-					// ArrayList<MKPoiInfo> stPois =
-					// res.getAddrResult().mStartPoiList;
-					// ArrayList<MKPoiInfo> enPois =
-					// res.getAddrResult().mEndPoiList;
-					// ArrayList<MKCityListInfo> stCities =
-					// res.getAddrResult().mStartCityList;
-					// ArrayList<MKCityListInfo> enCities =
-					// res.getAddrResult().mEndCityList;
-					return;
-				}
+				
 				if (error != 0 || res == null) {
 					Toast.makeText(OtherLocation.this, "抱歉，未找到结果",
 							Toast.LENGTH_SHORT).show();
@@ -174,37 +139,20 @@ public class OtherLocation extends Activity {
 				}
 
 				transitOverlay = new TransitOverlay(OtherLocation.this, map);
-				// 此处仅展示一个方案作为示例
 				transitOverlay.setData(res.getPlan(0));
-				// 清除其他图层
 				map.getOverlays().clear();
-				// 添加路线图层
 				map.getOverlays().add(transitOverlay);
-				// 执行刷新使生效
 				map.refresh();
-				// 使用zoomToSpan()绽放地图，使路线能完全显示在地图上
 				map.getController().zoomToSpan(transitOverlay.getLatSpanE6(),
 						transitOverlay.getLonSpanE6());
-				// 移动地图到起点
 				map.getController().animateTo(res.getStart().pt);
-				// 重置路线节点索引，节点浏览时使用
+				Toast.makeText(OtherLocation.this, "you are int ",
+						Toast.LENGTH_SHORT).show();
 			}
 
 			public void onGetWalkingRouteResult(MKWalkingRouteResult res,
 					int error) {
-				// 起点或终点有歧义，需要选择具体的城市列表或地址列表
-				if (error == MKEvent.ERROR_ROUTE_ADDR) {
-					// 遍历所有地址
-					// ArrayList<MKPoiInfo> stPois =
-					// res.getAddrResult().mStartPoiList;
-					// ArrayList<MKPoiInfo> enPois =
-					// res.getAddrResult().mEndPoiList;
-					// ArrayList<MKCityListInfo> stCities =
-					// res.getAddrResult().mStartCityList;
-					// ArrayList<MKCityListInfo> enCities =
-					// res.getAddrResult().mEndCityList;
-					return;
-				}
+				
 				if (error != 0 || res == null) {
 					Toast.makeText(OtherLocation.this, "抱歉，未找到结果",
 							Toast.LENGTH_SHORT).show();
@@ -212,7 +160,6 @@ public class OtherLocation extends Activity {
 				}
 
 				routeOverlay = new RouteOverlay(OtherLocation.this, map);
-				// 此处仅展示一个方案作为示例
 				routeOverlay.setData(res.getPlan(0).getRoute(0));
 				// 清除其他图层
 				map.getOverlays().clear();
@@ -244,41 +191,35 @@ public class OtherLocation extends Activity {
 			}
 
 			public void onGetPoiDetailSearchResult(int type, int iError) {
-				// TODO Auto-generated method stub
 			}
 
 			public void onGetShareUrlResult(MKShareUrlResult result, int type,
 					int error) {
-				// TODO Auto-generated method stub
 
 			}
 		});
 
-		mLocClient = new LocationClient(this);
+		mLocClient = new LocationClient(this);//定位的类
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true);
 		option.setCoorType("bd09ll");
-		option.setScanSpan(1000);// 每一秒钟跟新�?�?
+		option.setScanSpan(1000);// 每一秒钟跟新一次
 		option.setAddrType("all");
-		mLocClient.setLocOption(option);
-		mLocClient.registerLocationListener(new MyLocationListenner());
-		mLocClient.start();
+		mLocClient.setLocOption(option);//设置定位参数
+		mLocClient.registerLocationListener(new MyLocationListenner());//注册定位返回监听时间
+		mLocClient.start();//开始定位
 		map.getController().setZoom(16);
-		myLocationOverlay.setData(data);
-		// 添加定位图层
+		myLocationOverlay.setData(data);//设置位子图层的位子坐标  并没有用此代码
 		map.getOverlays().add(myLocationOverlay);
 		myLocationOverlay.enableCompass();
 		myLocationOverlay.setLocationMode(LocationMode.NORMAL);
-		//绘制我的位置的图�?
 		myLocationOverlay.setMarker(null);
-		// 修改定位数据后刷新图层生�?
-		map.refresh();
+		map.refresh();//并没有用此代码
         
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
 
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             io=false;
@@ -288,6 +229,7 @@ public class OtherLocation extends Activity {
 
 		return super.onKeyDown(keyCode, event);
 	}
+	
          private boolean is = true;
          private boolean io = true ;
 	public class MyLocationListenner implements BDLocationListener {
@@ -295,7 +237,7 @@ public class OtherLocation extends Activity {
 		public void onReceiveLocation(BDLocation location) {
 			if (location == null)
 				return;
-
+      // 获取定位得到的位子信息  坐标
 			myPoi = new GeoPoint((int) (location.getLatitude() * 1e6),
 					(int) (location.getLongitude() * 1e6));
 		
@@ -304,10 +246,12 @@ public class OtherLocation extends Activity {
 			data.accuracy = location.getRadius();
 			data.direction = location.getDerect();
 			myLocationOverlay.setData(data);
+			//百度api的bug解决办法
 			if(io)
 			map.refresh();
+			//这有第一定位才会把自己的位子放置在地图的中央
 			if (is) {
-
+               
 				controll.animateTo(new GeoPoint((int) (data.latitude * 1e6),
 						(int) (data.longitude * 1e6)));
                 is=false ;
