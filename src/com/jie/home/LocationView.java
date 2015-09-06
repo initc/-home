@@ -69,9 +69,9 @@ public class LocationView extends Activity {
 		myView.getOverlays().add(myLocationOverlay);
 		myLocationOverlay.enableCompass();
 		myLocationOverlay.setLocationMode(LocationMode.FOLLOWING);
-		//绘制我的位置的图�?
+		//绘制我的位置的图
 		myLocationOverlay.setMarker(null);
-		// 修改定位数据后刷新图层生�?
+		// 修改定位数据后刷新图层生
 		myView.refresh();
 
 	}
