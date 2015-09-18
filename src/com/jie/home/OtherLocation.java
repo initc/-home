@@ -47,7 +47,7 @@ public class OtherLocation extends Activity {
 	GeoPoint myPoi; //位子的存储类  是具体的 经纬度
 	MyLocationOverlay myLocationOverlay;
 	LocationData data ;
-	 MapController  controll ;
+	MapController  controll ;
 	Handler handler = new Handler() {
 
 		@Override
@@ -184,6 +184,27 @@ public class OtherLocation extends Activity {
 			}
 
 			public void onGetBusDetailResult(MKBusLineResult result, int iError) {
+				if (iError != 0 || result == null) {
+					Toast.makeText(OtherLocation.this, "抱歉，未找到结果", Toast.LENGTH_LONG).show();
+					return;
+		        }
+
+				RouteOverlay routeOverlay = new RouteOverlay(OtherLocation.this, map);
+			    // 此处仅展示一个方案作为示例
+			    routeOverlay.setData(result.getBusRoute());
+			    //清除其他图层
+			    map.getOverlays().clear();
+			    //添加路线图层
+			    map.getOverlays().add(routeOverlay);
+			    //刷新地图使生效
+			    map.refresh();
+			    //移动地图到起点
+			    map.getController().animateTo(result.getBusRoute().getStart());
+			  //将路线数据保存给全局变量
+			    route = result.getBusRoute();
+				
+				
+				
 			}
 
 			public void onGetSuggestionResult(MKSuggestionResult res, int arg1) {
